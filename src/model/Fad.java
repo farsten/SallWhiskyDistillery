@@ -11,10 +11,10 @@ public class Fad {
     private String type;
 
     private ArrayList<Påfyldning> påfyldninger;
-    private Lager lager;
+    private Lagerplacering lagerplacering;
 
     public Fad(int fadId, int startMængde, String leverandør, String tidligereIndhold,
-               double slutMængde, String type, Lager lager) {
+               double slutMængde, String type) {
         this.fadId = fadId;
         this.startMængde = startMængde;
         this.leverandør = leverandør;
@@ -22,7 +22,6 @@ public class Fad {
         this.slutMængde = slutMængde;
         this.type = type;
         this.påfyldninger = new ArrayList<>();
-        this.lager = lager;
     }
 
     public int getFadId() {
@@ -53,8 +52,36 @@ public class Fad {
         return påfyldninger;
     }
 
-    public Lager getLager() {
-        return lager;
+    public Lagerplacering getLagerplacering() {
+        return lagerplacering;
     }
 
+    public Lager getLager() {
+        if (lagerplacering == null) {
+            return null;
+        }
+        return lagerplacering.getLager();
+    }
+
+    public void setLagerplacering(Lagerplacering nyPlacering) {
+        if (nyPlacering != null && !nyPlacering.erLedig()) {
+            throw new IllegalArgumentException("Pladsen er allerede optaget");
+        }
+
+        if (lagerplacering != null) {
+            lagerplacering.setFad(null);
+        }
+        lagerplacering = nyPlacering;
+
+        if (nyPlacering != null) {
+            nyPlacering.setFad(this);
+        }
+    }
+
+    public String getPlacering() {
+        if (lagerplacering == null) {
+            return "Fadet er ikke placeret";
+        }
+        return lagerplacering.toString();
+    }
 }
