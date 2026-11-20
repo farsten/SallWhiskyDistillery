@@ -1,8 +1,11 @@
 import java.time.LocalDate;
 
 public class Påfyldning {
-    int påfyldningId;
-    LocalDate dato;
-    double liter;
-    double alkoholprocent;
+    private int påfyldningId;
+    private LocalDate dato;
+    private double liter;
+    private double alkoholprocent;
+
+    private Destillat destillat;
+
 }

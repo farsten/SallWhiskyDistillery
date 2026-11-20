@@ -1,7 +1,9 @@
 import java.time.LocalDate;
 
 public class MaltBatch {
-    int batchId;
-    String kornsort;
-    LocalDate høstDato;
+    private int batchId;
+    private String kornsort;
+    private LocalDate høstDato;
+
+    private Mark mark;
 }

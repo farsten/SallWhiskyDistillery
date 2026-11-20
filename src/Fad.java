@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Fad {
     private int fadId;
     private int startMængde;
@@ -6,4 +8,6 @@ public class Fad {
     private double slutMængde;
     private String type;
 
+    private ArrayList<Påfyldning> påfyldninger;
+    private Lager lager;
 }

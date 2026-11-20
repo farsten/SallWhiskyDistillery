@@ -1,4 +1,4 @@
 public class Medarbejder {
-    int medarbejderId;
-    String navn;
+    private int medarbejderId;
+    private String navn;
 }

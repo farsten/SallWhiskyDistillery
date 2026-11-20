@@ -7,4 +7,14 @@ public class Destillering {
     private double alkoholProcent;
     private int newMakeNr;
 
+    private MaltBatch maltBatch;
+    private Medarbejder medarbejder;
+
+    public void start() {
+        // TODO
+    }
+
+    public void slut() {
+        // TODO
+    }
 }

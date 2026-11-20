@@ -1,4 +1,4 @@
 public class Mark {
-    int markId;
-    String navn;
+    private int markId;
+    private String navn;
 }
