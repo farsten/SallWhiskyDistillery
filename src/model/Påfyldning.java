@@ -8,15 +8,15 @@ public class Påfyldning {
     private double liter;
     private double alkoholprocent;
 
-    private Destillat destillat;
+    private Destillering destillering;
 
     public Påfyldning(int påfyldningId, LocalDate dato, double liter,
-                      double alkoholprocent, Destillering destillat) {
+                      double alkoholprocent, Destillering destillering) {
         this.påfyldningId = påfyldningId;
         this.dato = dato;
         this.liter = liter;
         this.alkoholprocent = alkoholprocent;
-        this.destillat = destillat;
+        this.destillering = destillering;
     }
 
     public int getPåfyldningId() {
@@ -35,7 +35,7 @@ public class Påfyldning {
         return alkoholprocent;
     }
 
-    public Destillat getDestillat() {
-        return destillat;
+    public Destillering getDestillering() {
+        return destillering;
     }
 }
