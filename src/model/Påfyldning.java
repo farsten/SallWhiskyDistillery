@@ -11,7 +11,7 @@ public class Påfyldning {
     private Destillat destillat;
 
     public Påfyldning(int påfyldningId, LocalDate dato, double liter,
-                      double alkoholprocent, Destillat destillat) {
+                      double alkoholprocent, Destillering destillat) {
         this.påfyldningId = påfyldningId;
         this.dato = dato;
         this.liter = liter;

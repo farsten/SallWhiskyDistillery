@@ -52,6 +52,10 @@ public class Fad {
         return påfyldninger;
     }
 
+    public void addPåfyldning(Påfyldning påfyldning) {
+        påfyldninger.add(påfyldning);
+    }
+
     public Lagerplacering getLagerplacering() {
         return lagerplacering;
     }

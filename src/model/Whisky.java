@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class Whisky {
     private int produktId;
@@ -30,5 +31,8 @@ public class Whisky {
 
     public ArrayList<Blanding> getBlandingList() {
         return blandingList;
+    }
+    public void addBlanding(Blanding blanding) {
+        blandingList.add(blanding);
     }
 }
