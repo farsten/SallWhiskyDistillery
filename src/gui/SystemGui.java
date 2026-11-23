@@ -34,7 +34,7 @@ public class SystemGui extends Application {
         pane.setVgap(10);
 
         //overskrift
-        Label lblTitle = new Label("Sall Whisky                                               Destilleriets IT-System");
+        Label lblTitle = new Label("Sall Whisky                                    Destilleriets IT-System");
         HBox topBox = new HBox(lblTitle);
         pane.add(topBox, 0,0);
         topBox.setStyle("-fx-background-color: #B34D1E;");
@@ -117,6 +117,8 @@ public class SystemGui extends Application {
         //overskrift
         Label lblRegistrérMark = new Label ("Registrér mark");
         markGridPane.add(lblRegistrérMark,0,0);
+
+        // Overskriftens farve, tykkelse og størrelse
         lblRegistrérMark.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
 
         //labels for mark-ID og mark-navn
@@ -129,7 +131,7 @@ public class SystemGui extends Application {
         TextField txfMarkID = new TextField();
         TextField txfMarkNavn= new TextField();
         markGridPane.add(txfMarkID,0,2);
-        markGridPane.add(txfMarkNavn,4,2);
+        markGridPane.add(txfMarkNavn,3,2);
 
         //Registrér button
         Button btnRegistrér = new Button("Registrér");
