@@ -22,16 +22,30 @@ public class Controller {
         return mark;
     }
 
-
-    //UC2: Registrér fad
-    public static Fad opretFad(int fadId, int startMængde, String leverandør, String tidligereIndhold, double slutMængde, String type) {
-        if (findFad(fadId) != null) { //hvis fad allerede findes
-            throw new IllegalArgumentException("Fad nr. " + fadId + " findes allerede");
+    //UC2: Opret maltBatch
+    public static MaltBatch opretMaltBatch(int batchId, String kornsort, LocalDate høstDato, Mark mark) {
+        if (findMaltBatch(batchId) != null) {
+            throw new IllegalArgumentException("MaltBatch nr. " + batchId + " findes allerede");
         }
-        Fad fad = new Fad(fadId, startMængde, leverandør, tidligereIndhold, slutMængde, type);
-        Storage.addFad(fad);
-        return fad;
+
+        if (kornsort.isEmpty()) {
+            throw new IllegalArgumentException("Ugyldigt kornsort angivet");
+        }
+
+        if (høstDato == null) {
+            throw new IllegalArgumentException("Vælg en høst dato");
+        }
+
+        if (mark == null) {
+            throw new IllegalArgumentException("Der skal vælges en mark");
+        }
+
+        MaltBatch maltBatch = new MaltBatch(batchId, kornsort, høstDato, mark);
+        Storage.addMaltBatch(maltBatch);
+
+        return maltBatch;
     }
+
 
     // UC3: Registrér destillering
     public static Destillering registrerDestillering(LocalDate startDato, LocalDate slutDato, double mængdeLiter, double alkoholProcent, String rygemateriale, String kommentar, MaltBatch maltBatch, Medarbejder medarbejder) {
@@ -59,8 +73,60 @@ public class Controller {
         Storage.addDestillering(destillering);
         return destillering;
     }
+    //UC4: Registrér fad
+    public static Fad opretFad(int fadId, int startMængde, String leverandør, String tidligereIndhold, double slutMængde, String type) {
+        if (findFad(fadId) != null) { //hvis fad allerede findes
+            throw new IllegalArgumentException("Fad nr. " + fadId + " findes allerede");
+        }
+        Fad fad = new Fad(fadId, startMængde, leverandør, tidligereIndhold, slutMængde, type);
+        Storage.addFad(fad);
+        return fad;
+    }
 
-    //UC5: Opret whiskeyprodukt
+    //UC5: Registrér påfyldning på fad
+    public static Påfyldning registrerPåfyldning(int påfyldningId, LocalDate dato, double liter, double alkoholprocent, Fad fad, Destillering destillering) {
+        if (fad == null) {
+            throw new IllegalArgumentException("Der skal vælges et fad");
+        }
+        if (destillering == null) {
+            throw new IllegalArgumentException("Der skal vælges en destillering");
+        }
+
+        if (liter <= 0) {
+            throw new IllegalArgumentException("Liter kan ikke være 0 eller under");
+        }
+
+        if (alkoholprocent < 0 || alkoholprocent > 100) {
+            throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
+        }
+
+        if (dato.isBefore(destillering.getSlutDato())) {
+            throw new IllegalArgumentException("Angivet dato er før destilleringens slut dato");
+        }
+
+        if (fad.getSlutMængde() + liter <= fad.getStartMængde()) {
+            double plads = fad.getStartMængde() - fad.getSlutMængde();
+            throw new IllegalArgumentException("Fadet har kun plads til " + plads + " liter");
+        }
+
+        Påfyldning påfyldning = new Påfyldning(påfyldningId, dato, liter, alkoholprocent, destillering);
+        fad.addPåfyldning(påfyldning);
+
+        return påfyldning;
+    }
+
+
+    //UC6: Registrér fadplacering
+    public static void placerFad(Fad fad, Lager lager, int reol, int hylde) {
+        Lagerplacering placering = lager.findLagerplacering(reol, hylde);
+        if (placering == null) { //hvis placeringen ikke findes
+            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + " findes ikke");
+        }
+        fad.setLagerplacering(placering);
+    }
+
+
+    //UC7: Opret whiskeyprodukt
     public static Blanding opretBlanding(int blandingId, LocalDate dato, String navn, int liter, double alkoholprocent) {
         if (findBlanding(blandingId) != null) {
             throw new IllegalArgumentException("Blanding nr. " + blandingId + " findes allerede");
@@ -112,38 +178,6 @@ public class Controller {
         return whisky;
     }
 
-    //UC6: Registrér påfyldning på fad
-    public static Påfyldning registrerPåfyldning(int påfyldningId, LocalDate dato, double liter, double alkoholprocent, Fad fad, Destillering destillering) {
-        if (fad == null) {
-            throw new IllegalArgumentException("Der skal vælges et fad");
-        }
-        if (destillering == null) {
-            throw new IllegalArgumentException("Der skal vælges en destillering");
-        }
-
-        if (liter <= 0) {
-            throw new IllegalArgumentException("Liter kan ikke være 0 eller under");
-        }
-
-        if (alkoholprocent < 0 || alkoholprocent > 100) {
-            throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
-        }
-
-        if (dato.isBefore(destillering.getSlutDato())) {
-            throw new IllegalArgumentException("Angivet dato er før destilleringens slut dato");
-        }
-
-        if (fad.getSlutMængde() + liter <= fad.getStartMængde()) {
-            double plads = fad.getStartMængde() - fad.getSlutMængde();
-            throw new IllegalArgumentException("Fadet har kun plads til " + plads + " liter");
-        }
-
-        Påfyldning påfyldning = new Påfyldning(påfyldningId, dato, liter, alkoholprocent, destillering);
-        fad.addPåfyldning(påfyldning);
-
-        return påfyldning;
-    }
-
     public static Lager opretLager(int lagerId, String adresse, int kapacitet) {
         Lager lager = new Lager(lagerId, adresse, kapacitet);
         Storage.addLager(lager);
@@ -152,15 +186,6 @@ public class Controller {
 
     public static Lagerplacering opretLagerplacering(Lager lager, int reol, int hylde) {
         return lager.opretLagerplacering(reol, hylde);
-    }
-
-    //UC7: Registrér fadplacering
-    public static void placerFad(Fad fad, Lager lager, int reol, int hylde) {
-        Lagerplacering placering = lager.findLagerplacering(reol, hylde);
-        if (placering == null) { //hvis placeringen ikke findes
-            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + " findes ikke");
-        }
-        fad.setLagerplacering(placering);
     }
 
     //UC8: Vis whiskyhistorik
@@ -194,14 +219,19 @@ public class Controller {
 
     //Opret medarbejder
     public static Medarbejder opretMedarbejder(int medarbejderId, String navn) {
-        // TODO
-        return null;
-    }
 
-    //Opret maltBatch
-    public static MaltBatch opretMaltBatch(int batchId, String kornsort, LocalDate høstDato, Mark mark) {
-        // TODO
-        return null;
+        if (findMedarbejder(medarbejderId) != null) {
+            throw new IllegalArgumentException("Medarbejder nr. " + medarbejderId + " findes allerede");
+        }
+
+        if (navn == null) {
+            throw new IllegalArgumentException("Ugyldigt navn angivet");
+        }
+
+        Medarbejder medarbejder = new Medarbejder(medarbejderId, navn);
+        Storage.addMedarbejdere(medarbejder);
+
+        return medarbejder;
     }
 
 
@@ -214,6 +244,7 @@ public class Controller {
         return fad.getPlacering();
     }
 
+    //Find metoder
     public static Mark findMark(int markId) {
         for (Mark mark : Storage.getMarker()) {
             if (mark.getMarkId() == markId) {
