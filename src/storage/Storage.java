@@ -11,7 +11,6 @@ public class Storage {
     private static final ArrayList<Mark> marker = new ArrayList<>();
     private static final ArrayList<MaltBatch>  maltBatches = new ArrayList<>();
     private static final ArrayList<Destillering> destilleringer = new ArrayList<>();
-    private static final ArrayList<Destillat>  destillater = new ArrayList<>();
     private static final ArrayList<Whisky>  whiskyer = new ArrayList<>();
     private static final ArrayList<Medarbejder>  medarbejdere = new ArrayList<>();
     private static final ArrayList<Blanding> blandinger = new ArrayList<>();
@@ -73,15 +72,6 @@ public class Storage {
     public static void addDestillering(Destillering destillering) {
         destilleringer.add(destillering);
     }
-    
-    //Destillat
-    public static ArrayList<Destillat> getDestillater() {
-        return new ArrayList<>(destillater);
-    }
-    public static void addDestillater(Destillat destillat) {
-        destillater.add(destillat);
-    }
-    
     
     //Whisky
     public static ArrayList<Whisky> getWhiskyer() {
