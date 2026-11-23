@@ -11,10 +11,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
 
-    private Mark mark = Controller.opretMark(1, "Stadsgaard");;
-    private MaltBatch maltBatch = Controller.opretMaltBatch(1, "Evergreen", LocalDate.of(2020, 8, 15), mark);
-    private Medarbejder medarbejder = Controller.opretMedarbejder(1, "Snævar");
 
+
+    private Mark mark;
+    private MaltBatch maltBatch;
+    private Medarbejder medarbejder;
+
+    @BeforeEach
+    void setUp() {
+        Storage.ryd();
+        mark = Controller.opretMark(1, "Stadsgaard");
+        maltBatch = Controller.opretMaltBatch(1, "Evergreen", LocalDate.of(2020, 8, 15), mark);
+        medarbejder = Controller.opretMedarbejder(1, "Snævar");
+    }
 
     //Mark
     @Test
@@ -86,22 +95,22 @@ class ControllerTest {
 
     @Test
     void opretFad() {
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         assertEquals(fad, Controller.findFad(65));
     }
 
     @Test
     void opretFadMedEksisterendeIdAfvises() {
-        Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - fransk");
         assertThrows(IllegalArgumentException.class, () ->
-                Controller.opretFad(65, 94, "Andet", "Bourbon", 0, "Ex-bourbon"));
+                Controller.opretFad(65, 94, "Andet", "Bourbon", 0, "Egetræ - fransk"));
     }
 
     //Påfyldning
 
     @Test
     void registrerPåfyldning() {
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
 
@@ -112,7 +121,7 @@ class ControllerTest {
 
     @Test
     void påfyldningStørreEndFadetAfvises() {
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
 
@@ -122,7 +131,7 @@ class ControllerTest {
 
     @Test
     void påfyldningFørDestilleringensSlutdatoAfvises() {
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
 
@@ -136,7 +145,7 @@ class ControllerTest {
     void placerFad() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Controller.opretLagerplacering(lager, 3, 2);
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
 
         Controller.placerFad(fad, lager, 3, 2);
 
@@ -146,7 +155,7 @@ class ControllerTest {
     @Test
     void placerFadPaaIkkeEksisterendePladsAfvises() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
 
         assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad, lager, 9, 9));
     }
@@ -155,8 +164,8 @@ class ControllerTest {
     void toFadePaaSammePladsAfvises() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Controller.opretLagerplacering(lager, 1, 1);
-        Fad fad1 = Controller.opretFad(1, 130, "A", "Sherry", 0, "Ex-oloroso");
-        Fad fad2 = Controller.opretFad(2, 130, "B", "Bourbon", 0, "Ex-bourbon");
+        Fad fad1 = Controller.opretFad(1, 130, "A", "Sherry", 0, "Egetræ - spansk");
+        Fad fad2 = Controller.opretFad(2, 130, "B", "Bourbon", 0, "Egetræ - fransk");
         Controller.placerFad(fad1, lager, 1, 1);
 
         assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad2, lager, 1, 1));
@@ -166,7 +175,7 @@ class ControllerTest {
 
     @Test
     void tilføjTomtFadTilBlandingAfvises() {
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Ex-oloroso");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         Blanding b = Controller.opretBlanding(1, LocalDate.of(2026, 11, 1), "A", 500, 52.2);
 
         assertThrows(IllegalArgumentException.class, () -> Controller.tilføjFadTilBlanding(b, fad));
@@ -184,7 +193,7 @@ class ControllerTest {
     void visWhiskyHistorik() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Controller.opretLagerplacering(lager, 3, 2);
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ    ");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
         Controller.placerFad(fad, lager, 3, 2);
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);

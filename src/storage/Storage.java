@@ -16,6 +16,19 @@ public class Storage {
     private static final ArrayList<Medarbejder>  medarbejdere = new ArrayList<>();
     private static final ArrayList<Blanding> blandinger = new ArrayList<>();
 
+    //KUN TIL TESTS!! Bruges til at rydde
+    public static void ryd() {
+        marker.clear();
+        maltBatches.clear();
+        medarbejdere.clear();
+        destilleringer.clear();
+        fade.clear();
+        lagre.clear();
+        blandinger.clear();
+        whiskyer.clear();
+    }
+
+
     //Lager
     public static ArrayList<Lager> getLagre() {
         return new ArrayList<>(lagre);
