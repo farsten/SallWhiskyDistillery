@@ -28,12 +28,16 @@ public class Controller {
             throw new IllegalArgumentException("MaltBatch nr. " + batchId + " findes allerede");
         }
 
-        if (kornsort.isEmpty()) {
+        if (kornsort == null) {
             throw new IllegalArgumentException("Ugyldigt kornsort angivet");
         }
 
         if (høstDato == null) {
             throw new IllegalArgumentException("Vælg en høst dato");
+        }
+
+        if (høstDato.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Kan ikke vælge høst dato i fremtiden");
         }
 
         if (mark == null) {
@@ -73,6 +77,7 @@ public class Controller {
         Storage.addDestillering(destillering);
         return destillering;
     }
+
     //UC4: Registrér fad
     public static Fad opretFad(int fadId, int startMængde, String leverandør, String tidligereIndhold, double slutMængde, String type) {
         if (findFad(fadId) != null) { //hvis fad allerede findes
@@ -104,7 +109,7 @@ public class Controller {
             throw new IllegalArgumentException("Angivet dato er før destilleringens slut dato");
         }
 
-        if (fad.getSlutMængde() + liter <= fad.getStartMængde()) {
+        if (fad.getSlutMængde() + liter > fad.getStartMængde()) {
             double plads = fad.getStartMængde() - fad.getSlutMængde();
             throw new IllegalArgumentException("Fadet har kun plads til " + plads + " liter");
         }
@@ -118,6 +123,12 @@ public class Controller {
 
     //UC6: Registrér fadplacering
     public static void placerFad(Fad fad, Lager lager, int reol, int hylde) {
+        if (lager == null) {
+            throw new IllegalArgumentException("Der skal vælges et lager");
+        }
+        if (fad == null) {
+            throw new IllegalArgumentException("Der skal vælges et fad");
+        }
         Lagerplacering placering = lager.findLagerplacering(reol, hylde);
         if (placering == null) { //hvis placeringen ikke findes
             throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + " findes ikke");
@@ -163,7 +174,7 @@ public class Controller {
         blanding.addFad(fad);
     }
 
-    public static Whisky opretWhisky(int produktId, String navn, double alkoholprocent) {
+    public static Whisky opretWhisky(int produktId, String navn, double alkoholprocent, Blanding blanding) {
         if (findWhisky(produktId) != null) {
             throw new IllegalArgumentException("Whisky nr. " + produktId + " findes allerede");
         }
@@ -172,7 +183,11 @@ public class Controller {
             throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
         }
 
-        Whisky whisky = new Whisky(produktId, navn, alkoholprocent);
+        if (blanding.getFadList().isEmpty()) {
+            throw new IllegalArgumentException("Der er ingen fad i blandingen");
+        }
+
+        Whisky whisky = new Whisky(produktId, navn, alkoholprocent, blanding);
         Storage.addWhisky(whisky);
 
         return whisky;
@@ -192,29 +207,34 @@ public class Controller {
     public static String visWhiskyHistorik(int produktId) {
         Whisky whisky = findWhisky(produktId);
         if (whisky == null) {
-            throw new IllegalArgumentException("Whisky nr . " + produktId + " findes ikke");
+            throw new IllegalArgumentException("Whisky nr. " + produktId + " findes ikke");
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("WHISKY nr. ").append(whisky.getProduktId()).append(": ").
-                append(whisky.getNavn()).append(" (").append(whisky.getAlkoholprocent()).append("%)\n");
+        String historik = "Whisky nr. " + whisky.getProduktId() + ": " + whisky.getNavn()
+                + " (" + whisky.getAlkoholprocent() + "%)\n";
 
-        if (whisky.getBlandingList().isEmpty()) {
-            stringBuilder.append("  Ingen blandinger registreret\n");
-            return stringBuilder.toString();
-        }
+        Blanding blanding = whisky.getBlanding();
+        historik += "\nBlanding: " + blanding.getNavn() + ", " + blanding.getDato()
+                + ", " + blanding.getLiter() + " liter\n";
 
-        for (Blanding blanding : whisky.getBlandingList()) {
-            stringBuilder.append("\n  Blanding: ").append(blanding.getNavn()).append(", ").append(blanding.getDato()).append(", ").append(blanding.getLiter()).append(" liter").append(", ").append(blanding.getAlkoholprocent()).append("%\n");
+        for (Fad fad : blanding.getFadList()) {
+            historik += "  Fad #" + fad.getFadId() + ": " + fad.getType()
+                    + ", tidligere " + fad.getTidligereIndhold()
+                    + ", fra " + fad.getLeverandør() + "\n";
+            historik += "  Placering: " + fad.getPlacering() + "\n";
 
-            if (blanding.getFadList().isEmpty()) {
-                stringBuilder.append("    Ingen fade registreret\n");
+            for (Påfyldning påfyldning : fad.getPåfyldninger()) {
+                Destillering d = påfyldning.getDestillering();
+                MaltBatch batch = d.getMaltBatch();
+
+                historik += "    " + påfyldning.getLiter() + " liter påfyldt " + påfyldning.getDato()
+                        + " fra NM " + d.getNewMakeNr() + "\n";
+                historik += "    Destilleret af " + d.getMedarbejder().getNavn()
+                        + " af " + batch.getKornsort()
+                        + " fra marken " + batch.getMark().getNavn() + "\n";
             }
-
-            //MANGLER AT TILFØJE ALT MED FAD HISTORIK!!
         }
-        return stringBuilder.toString();
-
+        return historik;
     }
 
     //Opret medarbejder
@@ -224,7 +244,8 @@ public class Controller {
             throw new IllegalArgumentException("Medarbejder nr. " + medarbejderId + " findes allerede");
         }
 
-        if (navn == null) {
+        if (navn == null || navn.isBlank()) { //isBlank() sørger for at hvis der
+            // bliver skrevet et navn med whitepsace, at den fanger det som et ugyldigt navn
             throw new IllegalArgumentException("Ugyldigt navn angivet");
         }
 

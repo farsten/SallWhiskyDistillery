@@ -8,13 +8,13 @@ public class Whisky {
     private String navn;
     private double alkoholprocent;
 
-    private ArrayList<Blanding> blandingList;
+    private Blanding blanding;
 
-    public Whisky(int produktId, String navn, double alkoholprocent) {
+    public Whisky(int produktId, String navn, double alkoholprocent,  Blanding blanding) {
         this.produktId = produktId;
         this.navn = navn;
         this.alkoholprocent = alkoholprocent;
-        this.blandingList = new ArrayList<>();
+        this.blanding = blanding;
     }
 
     public int getProduktId() {
@@ -29,10 +29,7 @@ public class Whisky {
         return alkoholprocent;
     }
 
-    public ArrayList<Blanding> getBlandingList() {
-        return blandingList;
-    }
-    public void addBlanding(Blanding blanding) {
-        blandingList.add(blanding);
+    public Blanding getBlanding() {
+        return blanding;
     }
 }
