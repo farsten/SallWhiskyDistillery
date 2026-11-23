@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+
 public class SystemGui extends Application {
     @Override
     public void start(Stage stage) {
@@ -16,7 +17,7 @@ public class SystemGui extends Application {
         GridPane pane = new GridPane();
         this.initContent(pane);
 
-        Scene scene = new Scene(pane, 900, 400);
+        Scene scene = new Scene(pane);
         stage.setScene(scene);
         stage.show();
     }
@@ -34,7 +35,7 @@ public class SystemGui extends Application {
         pane.setVgap(10);
 
         //overskrift
-        Label lblTitle = new Label("Sall Whisky                                    Destilleriets IT-System");
+        Label lblTitle = new Label("Sall Whisky                                        Destilleriets IT-System");
         HBox topBox = new HBox(lblTitle);
         pane.add(topBox, 0,0);
         topBox.setStyle("-fx-background-color: #B34D1E;");
@@ -108,10 +109,12 @@ public class SystemGui extends Application {
         farverPåTabs(visWhiskyprodukter);
 
         //Registrér mark tab
+        //________________________________________________________________
         GridPane markGridPane = new GridPane();
         markGridPane.setPadding(new Insets(20));
         markGridPane.setHgap(10);
         markGridPane.setVgap(10);
+        markGridPane.setPrefHeight(200);
         registrérMarkTab.setContent(markGridPane);
 
         //overskrift
@@ -134,8 +137,115 @@ public class SystemGui extends Application {
         markGridPane.add(txfMarkNavn,3,2);
 
         //Registrér button
-        Button btnRegistrér = new Button("Registrér");
-        markGridPane.add(btnRegistrér,5,3);
+        Button btnRegistrérMark = new Button("Registrér");
+        markGridPane.add(btnRegistrérMark,4,5);
+        //________________________________________________________________________
+
+
+        //Registrér malt tab
+        //________________________________________________________________________
+
+        GridPane maltGridPane = new GridPane();
+        maltGridPane.setPadding(new Insets(20));
+        maltGridPane.setHgap(10);
+        maltGridPane.setVgap(10);
+        maltGridPane.setPrefHeight(250);
+        registrérMaltTab.setContent(maltGridPane);
+
+        //Overskrift
+        Label lblRegistrérMaltBatch = new Label("Registrér maltbatch");
+        maltGridPane.add(lblRegistrérMaltBatch, 0,0);
+        lblRegistrérMaltBatch.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
+
+        //Labels for batch-id, høstdato og "vælg mark"
+        Label lblBatchID = new Label("Batch-ID");
+        maltGridPane.add(lblBatchID,0,1);
+
+        Label lblHøstDato = new Label("Høstdato");
+        maltGridPane.add(lblHøstDato,3,1);
+
+        Label lblVælgMark = new Label("Vælg mark");
+        maltGridPane.add(lblVælgMark,0,4);
+
+        //BatchID texfield, Høstdato datepicker, VælgMark combobox
+        TextField txfBatchID = new TextField();
+        maltGridPane.add(txfBatchID,0,2);
+
+        DatePicker dpHøstDato = new DatePicker();
+        maltGridPane.add(dpHøstDato,3,2);
+
+        ComboBox<String> cbVælgMark = new ComboBox<>();
+        maltGridPane.add(cbVælgMark,0,5);
+
+        //RegistrérMalt button
+        Button btnRegistrérMalt = new Button("Registrér");
+        maltGridPane.add(btnRegistrérMalt, 4,5);
+        //____________________________________________________________
+
+        //Registrér destillering
+        //____________________________________________________________
+        GridPane destilleringGridPane = new GridPane();
+        destilleringGridPane.setPadding(new Insets(20));
+        destilleringGridPane.setHgap(10);
+        destilleringGridPane.setVgap(10);
+        destilleringGridPane.setPrefHeight(250);
+        registrérDestilleringTab.setContent(destilleringGridPane);
+
+        //overskrift
+        Label lblRegistrérDestillering = new Label("Registrér destillering");
+        destilleringGridPane.add(lblRegistrérDestillering,0,0);
+        lblRegistrérDestillering.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
+
+        //Labels for newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde
+        Label lblNMNummer = new Label("New Make-nummer");
+        destilleringGridPane.add(lblNMNummer,0,1);
+
+        Label lblMaltBatch = new Label("Vælg maltbatch");
+        destilleringGridPane.add(lblMaltBatch,0,3);
+
+        Label lblDestilleringsAnsvarlig = new Label("Destilleringsansvarlig");
+        destilleringGridPane.add(lblDestilleringsAnsvarlig, 2,3);
+
+        Label lblStartDato = new Label("Startdato");
+        destilleringGridPane.add(lblStartDato,0,5);
+
+        Label lblSlutdato = new Label("Slutdato");
+        destilleringGridPane.add(lblSlutdato,2,5);
+
+        Label lblAlkoProcent = new Label("Alkoholprocent (%)");
+        destilleringGridPane.add(lblAlkoProcent,0,7);
+
+        Label lblMængde = new Label("Mængde (liter)");
+        destilleringGridPane.add(lblMængde,2,7);
+
+        /*Tekstfelter, ComboBoxes, DatePickers for
+          newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde*/
+
+        TextField txfNMNummer = new TextField();
+        destilleringGridPane.add(txfNMNummer,0,2,4,1);
+
+        ComboBox<String> cbMaltBatch = new ComboBox<>();
+        destilleringGridPane.add(cbMaltBatch, 0,4);
+
+        ComboBox<String> cbAnsvarlig = new ComboBox<>();
+        destilleringGridPane.add(cbAnsvarlig,2,4);
+
+        DatePicker dpStartDato = new DatePicker();
+        destilleringGridPane.add(dpStartDato, 0,6);
+
+        DatePicker dpSlutdato = new DatePicker();
+        destilleringGridPane.add(dpSlutdato, 2,6);
+
+        TextField txfAlkoProcent = new TextField();
+        destilleringGridPane.add(txfAlkoProcent,0,8);
+
+        TextField txfMængde = new TextField();
+        destilleringGridPane.add(txfMængde,2,8);
+
+        //Registrér button
+        Button btnRegistrérDestillering = new Button("Registrér");
+        btnRegistrérDestillering.setStyle("-fx-font-size: 10px;");
+        destilleringGridPane.add(btnRegistrérDestillering, 4,9);
 
 
     }
