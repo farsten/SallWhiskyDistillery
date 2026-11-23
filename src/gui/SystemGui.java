@@ -34,7 +34,7 @@ public class SystemGui extends Application {
         pane.setVgap(10);
 
         //overskrift
-        Label lblTitle = new Label("Sall Whisky                                          Destilleriets IT-System");
+        Label lblTitle = new Label("Sall Whisky                                    Destilleriets IT-System");
         HBox topBox = new HBox(lblTitle);
         pane.add(topBox, 0,0);
         topBox.setStyle("-fx-background-color: #B34D1E;");
@@ -42,17 +42,20 @@ public class SystemGui extends Application {
 
         // Tabs
         TabPane mainTabPane = new TabPane();
-        String produktionsTabString = "Produktion";
-        Tab produktionTab = new Tab(produktionsTabString);
+        Tab produktionTab = new Tab("Produktion");
         Tab fadeTab = new Tab("Fade og lager");
         Tab whiskyTab = new Tab("Whiskyprodukter");
         Tab historikTab = new Tab("Historik");
         mainTabPane.getTabs().addAll(produktionTab, fadeTab, whiskyTab, historikTab);
         pane.add(mainTabPane,0,1);
 
+        //Baggrundsfarve
+        mainTabPane.setStyle("-fx-background-color: #F8F1EB;");
+
         // Vælg Produktion som standard
         mainTabPane.getSelectionModel().select(produktionTab);
 
+        //Sørg for at tabs ikke kan lukkes ned/krydses
         mainTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         // Anvend farver
@@ -81,7 +84,7 @@ public class SystemGui extends Application {
         TabPane fadeTabPane = new TabPane();
         Tab registrérFadTab = new Tab("Registrér fad");
         Tab registrérPåfyldningTab = new Tab("Registrér påfyldning");
-        Tab registrérFadplaceringTab = new Tab("Registrér påfyldning");
+        Tab registrérFadplaceringTab = new Tab("Registrér fadplacering");
 
         fadeTabPane.getTabs().addAll(registrérFadTab, registrérPåfyldningTab, registrérFadplaceringTab);
         fadeTab.setContent(fadeTabPane);
@@ -104,7 +107,35 @@ public class SystemGui extends Application {
         farverPåTabs(opretWhiskyprodukt);
         farverPåTabs(visWhiskyprodukter);
 
+        //Registrér mark tab
+        GridPane markGridPane = new GridPane();
+        markGridPane.setPadding(new Insets(20));
+        markGridPane.setHgap(10);
+        markGridPane.setVgap(10);
+        registrérMarkTab.setContent(markGridPane);
 
+        //overskrift
+        Label lblRegistrérMark = new Label ("Registrér mark");
+        markGridPane.add(lblRegistrérMark,0,0);
+
+        // Overskriftens farve, tykkelse og størrelse
+        lblRegistrérMark.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
+
+        //labels for mark-ID og mark-navn
+        Label lblMarkID = new Label("Mark-ID");
+        Label lblMarkNavn = new Label("Markens navn");
+        markGridPane.add(lblMarkID,0,1);
+        markGridPane.add(lblMarkNavn,3,1);
+
+        //Textfields for mark-ID og mark-navn
+        TextField txfMarkID = new TextField();
+        TextField txfMarkNavn= new TextField();
+        markGridPane.add(txfMarkID,0,2);
+        markGridPane.add(txfMarkNavn,3,2);
+
+        //Registrér button
+        Button btnRegistrér = new Button("Registrér");
+        markGridPane.add(btnRegistrér,5,3);
 
 
     }
