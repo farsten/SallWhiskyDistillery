@@ -43,19 +43,20 @@ public class RegistrérMarkPane extends GridPane {
         //Registrér button
         Button btnRegistrérMark = new Button("Registrér");
         add(btnRegistrérMark, 4, 5);
-        btnRegistrérMark.setOnAction(event -> opretSommerhusAction());
+        btnRegistrérMark.setOnAction(event -> registrérMarkAction());
 
         Label lblMarker = new Label("Registrerede marker");
-        lvwMarker.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
+        lblMarker.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
         add(lblMarker,6,0);
         add(lvwMarker,6,1,2,6);
         lvwMarker.setPrefHeight(200);
+
         updateMarkListView();
     }
     private void updateMarkListView(){
         lvwMarker.getItems().setAll(Storage.getMarker());
     }
-    public void opretSommerhusAction() {
+    public void registrérMarkAction() {
         String markIDTekst = txfMarkID.getText().trim();
         String markNavn = txfMarkNavn.getText().trim();
         int markID;
@@ -86,6 +87,9 @@ public class RegistrérMarkPane extends GridPane {
         }
         Controller.opretMark(markID, markNavn);
         updateMarkListView();
+
+        txfMarkNavn.clear();
+        txfMarkID.clear();
 
     }
 }
