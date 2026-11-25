@@ -17,4 +17,11 @@ public class Mark {
         return navn;
     }
 
+    @Override
+    public String toString() {
+        return "Mark{" +
+                "markId=" + markId +
+                ", navn='" + navn + '\'' +
+                '}';
+    }
 }

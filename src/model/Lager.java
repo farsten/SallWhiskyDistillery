@@ -75,4 +75,14 @@ public class Lager {
         }
         return ledige;
     }
+
+    @Override
+    public String toString() {
+        return "Lager{" +
+                "lagerId=" + lagerId +
+                ", adresse='" + adresse + '\'' +
+                ", kapacitet=" + kapacitet +
+                ", reoler=" + reoler +
+                '}';
+    }
 }

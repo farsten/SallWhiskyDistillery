@@ -48,4 +48,16 @@ public class Blanding {
     public void addFad(Fad fad) {
         fadList.add(fad);
     }
+
+    @Override
+    public String toString() {
+        return "Blanding{" +
+                "blandingId=" + blandingId +
+                ", dato=" + dato +
+                ", navn='" + navn + '\'' +
+                ", liter=" + liter +
+                ", alkoholprocent=" + alkoholprocent +
+                ", fadList=" + fadList +
+                '}';
+    }
 }

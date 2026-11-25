@@ -76,4 +76,7 @@ public class Destillering {
     public String toString() {
         return "NM " + newMakeNr + " (" + startDato + " - " + slutDato + ")";
     }
+
+
+
 }

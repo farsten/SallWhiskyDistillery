@@ -12,7 +12,7 @@ public class Controller {
 
     //UC1: Registrér mark
     public static Mark opretMark(int markId, String navn) {
-        if (findMark(markId) != null) { //hvis marken ikke findes
+        if (findMark(markId) != null) { //hvis marken allerede findes
             throw new IllegalArgumentException("Mark nr. " + markId + " findes allerede");
         }
 
@@ -30,7 +30,7 @@ public class Controller {
             throw new IllegalArgumentException("MaltBatch nr. " + batchId + " findes allerede");
         }
 
-        if (kornsort == null) {
+        if (kornsort == null || kornsort.isBlank()) {
             throw new IllegalArgumentException("Ugyldigt kornsort angivet");
         }
 
@@ -81,11 +81,14 @@ public class Controller {
     }
 
     //UC4: Registrér fad
-    public static Fad opretFad(int fadId, int startMængde, String leverandør, String tidligereIndhold, double slutMængde, String type) {
-        if (findFad(fadId) != null) { //hvis fad allerede findes
+    public static Fad opretFad(int fadId, int størrelse, String leverandør, String tidligereIndhold, String type) {
+        if (findFad(fadId) != null) {
             throw new IllegalArgumentException("Fad nr. " + fadId + " findes allerede");
         }
-        Fad fad = new Fad(fadId, startMængde, leverandør, tidligereIndhold, slutMængde, type);
+        if (størrelse <= 0) {
+            throw new IllegalArgumentException("Fadets størrelse skal være større end 0 liter");
+        }
+        Fad fad = new Fad(fadId, størrelse, leverandør, tidligereIndhold, type);
         Storage.addFad(fad);
         return fad;
     }
@@ -107,12 +110,14 @@ public class Controller {
             throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
         }
 
+        if (dato == null) {
+            throw new IllegalArgumentException("Vælg en dato for påfyldningen");
+        }
         if (dato.isBefore(destillering.getSlutDato())) {
             throw new IllegalArgumentException("Angivet dato er før destilleringens slut dato");
         }
-
-        if (fad.getSlutMængde() + liter > fad.getStartMængde()) {
-            double plads = fad.getStartMængde() - fad.getSlutMængde();
+        if (fad.getIndholdLiter() + liter > fad.getStørrelse()) {
+            double plads = fad.getStørrelse() - fad.getIndholdLiter();
             throw new IllegalArgumentException("Fadet har kun plads til " + plads + " liter");
         }
 
@@ -184,22 +189,29 @@ public class Controller {
         blanding.addFad(fad);
     }
 
-    public static Whisky opretWhisky(int produktId, String navn, double alkoholprocent, Blanding blanding) {
+    public static Whisky opretWhisky(int produktId, String navn, double alkoholprocent, double vandLiter,
+                                     String vandKilde, String beskrivelse, Blanding blanding) {
         if (findWhisky(produktId) != null) {
             throw new IllegalArgumentException("Whisky nr. " + produktId + " findes allerede");
         }
-
         if (alkoholprocent < 0 || alkoholprocent > 100) {
             throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
         }
-
+        if (vandLiter < 0) {
+            throw new IllegalArgumentException("Mængden af vand kan ikke være negativ");
+        }
+        if (vandLiter > 0 && (vandKilde == null || vandKilde.isBlank())) {
+            throw new IllegalArgumentException("Angiv hvor vandet kommer fra");
+        }
+        if (blanding == null) {
+            throw new IllegalArgumentException("Der skal vælges en blanding");
+        }
         if (blanding.getFadList().isEmpty()) {
             throw new IllegalArgumentException("Der er ingen fad i blandingen");
         }
 
-        Whisky whisky = new Whisky(produktId, navn, alkoholprocent, blanding);
+        Whisky whisky = new Whisky(produktId, navn, alkoholprocent, vandLiter, vandKilde, beskrivelse, blanding);
         Storage.addWhisky(whisky);
-
         return whisky;
     }
 
@@ -222,7 +234,14 @@ public class Controller {
 
         String historik = "Whisky nr. " + whisky.getProduktId() + ": " + whisky.getNavn()
                 + " (" + whisky.getAlkoholprocent() + "%)\n";
-
+        if (whisky.getVandLiter() > 0) {
+            historik += "Fortyndet med " + whisky.getVandLiter() + " liter vand fra " + whisky.getVandKilde() + "\n";
+        } else {
+            historik += "Ikke fortyndet (cask strength)\n";
+        }
+        if (whisky.getBeskrivelse() != null && !whisky.getBeskrivelse().isBlank()) {
+            historik += "Beskrivelse: " + whisky.getBeskrivelse() + "\n";
+        }
         Blanding blanding = whisky.getBlanding();
         historik += "\nBlanding: " + blanding.getNavn() + ", " + blanding.getDato()
                 + ", " + blanding.getLiter() + " liter\n";

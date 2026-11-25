@@ -40,4 +40,8 @@ public class Lagerplacering {
     public String toString() {
         return "Lager " + lager.getLagerId() + " (" + lager.getAdresse() + "), reol " + reol + ", hylde " + hylde;
     }
+
+
+
+
 }

@@ -17,4 +17,11 @@ public class Medarbejder {
         return navn;
     }
 
+    @Override
+    public String toString() {
+        return "Medarbejder{" +
+                "medarbejderId=" + medarbejderId +
+                ", navn='" + navn + '\'' +
+                '}';
+    }
 }

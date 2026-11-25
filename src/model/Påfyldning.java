@@ -38,4 +38,15 @@ public class Påfyldning {
     public Destillering getDestillering() {
         return destillering;
     }
+
+    @Override
+    public String toString() {
+        return "Påfyldning{" +
+                "påfyldningId=" + påfyldningId +
+                ", dato=" + dato +
+                ", liter=" + liter +
+                ", alkoholprocent=" + alkoholprocent +
+                ", destillering=" + destillering +
+                '}';
+    }
 }

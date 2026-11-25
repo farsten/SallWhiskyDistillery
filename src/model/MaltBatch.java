@@ -31,4 +31,14 @@ public class MaltBatch {
     public Mark getMark() {
         return mark;
     }
+
+    @Override
+    public String toString() {
+        return "MaltBatch{" +
+                "batchId=" + batchId +
+                ", kornsort='" + kornsort + '\'' +
+                ", høstDato=" + høstDato +
+                ", mark=" + mark +
+                '}';
+    }
 }
