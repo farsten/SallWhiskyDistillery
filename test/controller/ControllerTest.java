@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import storage.Storage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +36,11 @@ class ControllerTest {
         assertThrows(IllegalArgumentException.class, () -> Controller.opretMark(1, "Dublet"));
     }
 
+    @Test
+    void opretMarkMedTomtNavnAfvises() {
+        assertThrows(IllegalArgumentException.class, () -> Controller.opretMark(2, " "));
+    }
+
     //MaltBatch
     @Test
     void opretMaltBatchUdenMarkAfvises() {
@@ -61,6 +67,14 @@ class ControllerTest {
                 LocalDate.of(2021, 2, 22), 400, 68.5, "Tørv", "", maltBatch, medarbejder);
 
         assertEquals(d, Controller.findDestillering(d.getNewMakeNr()));
+    }
+
+    @Test
+    void registrerDestilleringUdenRygemateriale() {
+        Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
+                LocalDate.of(2021, 2, 22), 400, 68.5, null, "", maltBatch, medarbejder);
+
+        assertNull(d.getRygemateriale());
     }
 
     @Test
@@ -173,16 +187,57 @@ class ControllerTest {
                 Controller.registrerPåfyldning(1, null, 100, 63, fad, d));
     }
 
+    //Lager og reoler
+    @Test
+    void opretLagerMedKapacitet0Afvises() {
+        assertThrows(IllegalArgumentException.class, () -> Controller.opretLager(1, "Sall", 0));
+    }
+
+    @Test
+    void opretReolGiverAllePladserSomLedige() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        Controller.opretReol(lager, 1, 3, 4);
+
+        assertEquals(12, Controller.findLedigePladser(lager).size());
+    }
+
+    @Test
+    void opretSammeReolToGangeAfvises() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        Controller.opretReol(lager, 1, 3, 4);
+
+        assertThrows(IllegalArgumentException.class, () -> Controller.opretReol(lager, 1, 2, 2));
+    }
+
+    @Test
+    void reolOverKapacitetAfvises() {
+        Lager lager = Controller.opretLager(1, "Sall", 10);
+
+        assertThrows(IllegalStateException.class, () -> Controller.opretReol(lager, 1, 3, 4));
+        assertEquals(0, lager.getAntalPladser());
+    }
+
+    @Test
+    void reolMed0HylderAfvises() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        assertThrows(IllegalArgumentException.class, () -> Controller.opretReol(lager, 1, 0, 4));
+    }
+
+    @Test
+    void opretReolUdenLagerAfvises() {
+        assertThrows(IllegalArgumentException.class, () -> Controller.opretReol(null, 1, 3, 4));
+    }
+
     //Fadplacering
     @Test
     void placerFad() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
-        Controller.opretLagerplacering(lager, 3, 2);
+        Controller.opretReol(lager, 3, 2, 1);
         Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Egetræ - spansk");
 
-        Controller.placerFad(fad, lager, 3, 2);
+        Controller.placerFad(fad, lager, 3, 2, 1);
 
-        assertEquals("Lager 1 (Sall), reol 3, hylde 2", Controller.findFadPlacering(65));
+        assertEquals("Lager 1 (Sall), reol 3, hylde 2, plads 1", Controller.findFadPlacering(65));
     }
 
     @Test
@@ -190,18 +245,101 @@ class ControllerTest {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Egetræ - spansk");
 
-        assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad, lager, 9, 9));
+        assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad, lager, 9, 9, 9));
     }
 
     @Test
     void toFadePåSammePladsAfvises() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
-        Controller.opretLagerplacering(lager, 1, 1);
+        Controller.opretReol(lager, 1, 1, 1);
         Fad fad1 = Controller.opretFad(1, 130, "A", "Sherry", "Egetræ - spansk");
         Fad fad2 = Controller.opretFad(2, 130, "B", "Bourbon", "Egetræ - fransk");
-        Controller.placerFad(fad1, lager, 1, 1);
+        Controller.placerFad(fad1, lager, 1, 1, 1);
 
-        assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad2, lager, 1, 1));
+        assertThrows(IllegalArgumentException.class, () -> Controller.placerFad(fad2, lager, 1, 1, 1));
+    }
+
+    @Test
+    void flereFadePåSammeHylde() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        Controller.opretReol(lager, 1, 1, 2);
+        Fad fad1 = Controller.opretFad(1, 130, "A", "Sherry", "Egetræ - spansk");
+        Fad fad2 = Controller.opretFad(2, 130, "B", "Bourbon", "Egetræ - fransk");
+
+        Controller.placerFad(fad1, lager, 1, 1, 1);
+        Controller.placerFad(fad2, lager, 1, 1, 2);
+
+        assertEquals("Lager 1 (Sall), reol 1, hylde 1, plads 1", Controller.findFadPlacering(1));
+        assertEquals("Lager 1 (Sall), reol 1, hylde 1, plads 2", Controller.findFadPlacering(2));
+    }
+
+    @Test
+    void flytFadFrigørGammelPlads() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        Controller.opretReol(lager, 1, 1, 2);
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Egetræ - spansk");
+
+        Controller.placerFad(fad, lager, 1, 1, 1);
+        Controller.placerFad(fad, lager, 1, 1, 2);
+
+        assertTrue(lager.findLagerplacering(1, 1, 1).erLedig());
+        assertFalse(lager.findLagerplacering(1, 1, 2).erLedig());
+    }
+
+    //Søgninger
+    @Test
+    void ledigePladserFalderNårFadPlaceres() {
+        Lager lager = Controller.opretLager(1, "Sall", 100);
+        Controller.opretReol(lager, 1, 1, 4);
+        Fad fad = Controller.opretFad(1, 130, "A", "Sherry", "Egetræ - spansk");
+
+        Controller.placerFad(fad, lager, 1, 1, 2);
+
+        ArrayList<Lagerplacering> ledige = Controller.findLedigePladser(lager);
+        assertEquals(3, ledige.size());
+        assertFalse(ledige.contains(lager.findLagerplacering(1, 1, 2)));
+    }
+
+    @Test
+    void findLedigePladserUdenLagerAfvises() {
+        assertThrows(IllegalArgumentException.class, () -> Controller.findLedigePladser(null));
+    }
+
+    @Test
+    void søgningIgnorererStoreOgSmåBogstaver() {
+        Fad sherry = Controller.opretFad(1, 130, "A", "Sherry", "Egetræ - spansk");
+
+        assertTrue(Controller.findFadeEfterTidligereIndhold("sherry").contains(sherry));
+    }
+
+    @Test
+    void søgningFinderDelvistMatch() {
+        Fad exSherry = Controller.opretFad(1, 130, "A", "Ex-sherry", "Egetræ - spansk");
+        Fad bourbon = Controller.opretFad(2, 130, "B", "Bourbon", "Egetræ - fransk");
+
+        ArrayList<Fad> resultat = Controller.findFadeEfterTidligereIndhold("sherry");
+
+        assertTrue(resultat.contains(exSherry));
+        assertFalse(resultat.contains(bourbon));
+    }
+
+    @Test
+    void søgningUdenTrefferGiverTomListe() {
+        Controller.opretFad(1, 130, "A", "Sherry", "Egetræ - spansk");
+        assertTrue(Controller.findFadeEfterTidligereIndhold("rødvin").isEmpty());
+    }
+
+    @Test
+    void søgningCrasherIkkeVedFadUdenTidligereIndhold() {
+        Controller.opretFad(1, 130, "A", null, "Egetræ - spansk");
+        Fad sherry = Controller.opretFad(2, 130, "B", "Sherry", "Egetræ - fransk");
+
+        assertTrue(Controller.findFadeEfterTidligereIndhold("sherry").contains(sherry));
+    }
+
+    @Test
+    void søgningMedTomtSøgeordAfvises() {
+        assertThrows(IllegalArgumentException.class, () -> Controller.findFadeEfterTidligereIndhold(" "));
     }
 
     //Blanding og whisky
@@ -244,9 +382,9 @@ class ControllerTest {
     @Test
     void visWhiskyHistorik() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
-        Controller.opretLagerplacering(lager, 3, 2);
+        Controller.opretReol(lager, 3, 2, 1);
         Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Egetræ - spansk");
-        Controller.placerFad(fad, lager, 3, 2);
+        Controller.placerFad(fad, lager, 3, 2, 1);
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
         Controller.registrerPåfyldning(1, LocalDate.of(2021, 2, 28), 100, 63, fad, d);
@@ -260,7 +398,7 @@ class ControllerTest {
         assertTrue(historik.contains("Første udgivelse"));
         assertTrue(historik.contains("Begravet dal under destilleriet"));
         assertTrue(historik.contains("Fad #65"));
-        assertTrue(historik.contains("reol 3, hylde 2"));
+        assertTrue(historik.contains("reol 3, hylde 2, plads 1"));
         assertTrue(historik.contains("Snævar"));
         assertTrue(historik.contains("Stadsgård"));
     }

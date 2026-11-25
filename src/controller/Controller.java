@@ -54,8 +54,9 @@ public class Controller {
 
 
     // UC3: Registrér destillering
-    public static Destillering registrerDestillering(LocalDate startDato, LocalDate slutDato, double mængdeLiter, double alkoholProcent, @Nullable String rygemateriale, String kommentar, MaltBatch maltBatch, Medarbejder medarbejder) {
-        if (maltBatch == null) {
+    public static Destillering registrerDestillering(LocalDate startDato, LocalDate slutDato, double mængdeLiter,
+                                                     double alkoholProcent, @Nullable String rygemateriale,
+                                                     String kommentar, MaltBatch maltBatch, Medarbejder medarbejder) {        if (maltBatch == null) {
             throw new IllegalArgumentException("Der skal vælges en maltbatch");
         }
         if (medarbejder == null) {
