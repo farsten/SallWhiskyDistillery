@@ -4,7 +4,7 @@ public class Whisky {
     private int produktId;
     private String navn;
     private double alkoholprocent;
-    private double vandLiter;
+    private double vandLiter; //"hvor meget vand den er fortyndet med, hvor vandet kommer fra"
     private String vandKilde;   // tom hvis der ikke er tilsat vand
     private String beskrivelse;
 

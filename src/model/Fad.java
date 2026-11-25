@@ -7,9 +7,9 @@ public class Fad {
     private int fadId;
     private int størrelse;        // fadets maksimale indhold i liter
     private String leverandør;
-    private String tidligereIndhold;
+    private String tidligereIndhold; // hvad den genbrugte fad har indholdt, f.eks. bourbon osv.
     private double slutMængde;    // måles når fadet tømmes, bruges til at beregne fordampning
-    private String type;
+    private String type; // træsort
 
     private ArrayList<Påfyldning> påfyldninger;
     private Lagerplacering lagerplacering;

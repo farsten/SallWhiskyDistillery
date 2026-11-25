@@ -22,14 +22,14 @@ public class App {
 
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Controller.opretLagerplacering(lager, 3, 2);
-        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Spansk");
         Controller.placerFad(fad, lager, 3, 2);
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
         Controller.registrerPåfyldning(1, LocalDate.of(2021, 2, 28), 100, 63, fad, d);
         Blanding b = Controller.opretBlanding(1, LocalDate.of(2026, 11, 1), "Første udgivelse", 500, 52.2);
         Controller.tilføjFadTilBlanding(b, fad);
-        Controller.opretWhisky(1, "Færste udgivelse", 52.2, b);
+        Controller.opretWhisky(1, "Færste udgivelse", 52.2, 2.1, "Baghave", "Lækker whisky til aftensmad", b);
         IO.println(Controller.visWhiskyHistorik(1));
     }
 
