@@ -221,8 +221,11 @@ public class Controller {
         return lager;
     }
 
-    public static Lagerplacering opretLagerplacering(Lager lager, int reol, int hylde, int plads) {
-        return lager.opretLagerplacering(reol, hylde, plads);
+    public static void opretReol(Lager lager, int reol, int antalHylder, int pladserPrHylde) {
+        if (lager == null) {
+            throw new IllegalArgumentException("Der skal vælges et lager");
+        }
+        lager.opretReol(reol, antalHylder, pladserPrHylde);
     }
 
     //UC8: Vis whiskyhistorik

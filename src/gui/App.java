@@ -21,9 +21,9 @@ public class App {
         Medarbejder medarbejder = Controller.opretMedarbejder(1, "Snævar");
 
         Lager lager = Controller.opretLager(1, "Sall", 100);
-        Controller.opretLagerplacering(lager, 3, 2);
+        Controller.opretReol(lager, 3, 2, 2);
         Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", "Spansk");
-        Controller.placerFad(fad, lager, 3, 2);
+        Controller.placerFad(fad, lager, 3, 2, 1);
         Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
                 LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
         Controller.registrerPåfyldning(1, LocalDate.of(2021, 2, 28), 100, 63, fad, d);

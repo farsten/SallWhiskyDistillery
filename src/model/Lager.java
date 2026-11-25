@@ -31,30 +31,31 @@ public class Lager {
         return kapacitet;
     }
 
-    public Lagerplacering opretLagerplacering(int reol, int hylde, int plads) {
-        if (findLagerplacering(reol, hylde, plads) != null) {
-            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + ", plads " + plads + " findes allerede");
+    // K16: Opret en reol med et antal hylder, hvor hver hylde har et antal pladser.
+// Alle pladser oprettes som ledige.
+    public void opretReol(int reol, int antalHylder, int pladserPrHylde) {
+        if (reoler.containsKey(reol)) {
+            throw new IllegalArgumentException("Reol " + reol + " findes allerede");
         }
-        if (getAntalPladser() >= kapacitet) {
-            throw new IllegalStateException("Lageret er fuldt (kapacitet " + kapacitet + ")");
+        if (antalHylder <= 0 || pladserPrHylde <= 0) {
+            throw new IllegalArgumentException("Antal hylder og pladser skal være større end 0");
         }
 
-        Lagerplacering placering = new Lagerplacering(reol, hylde, plads, this);
-
-        // Opret reolen, hvis den ikke findes
-        if (!reoler.containsKey(reol)) {
-            reoler.put(reol, new TreeMap<>());
+        int nyePladser = antalHylder * pladserPrHylde;
+        if (getAntalPladser() + nyePladser > kapacitet) {
+            int ledigKapacitet = kapacitet - getAntalPladser();
+            throw new IllegalStateException("Lageret har kun plads til " + ledigKapacitet + " pladser mere");
         }
-        Map<Integer, Map<Integer, Lagerplacering>> hylder = reoler.get(reol);
 
-        // Opret hylden på reolen, hvis den ikke findes
-        if (!hylder.containsKey(hylde)) {
-            hylder.put(hylde, new TreeMap<>());
+        Map<Integer, Map<Integer, Lagerplacering>> hylder = new TreeMap<>();
+        for (int hylde = 1; hylde <= antalHylder; hylde++) {
+            Map<Integer, Lagerplacering> pladser = new TreeMap<>();
+            for (int plads = 1; plads <= pladserPrHylde; plads++) {
+                pladser.put(plads, new Lagerplacering(reol, hylde, plads, this));
+            }
+            hylder.put(hylde, pladser);
         }
-        Map<Integer, Lagerplacering> pladser = hylder.get(hylde);
-
-        pladser.put(plads, placering);
-        return placering;
+        reoler.put(reol, hylder);
     }
 
     public Lagerplacering findLagerplacering(int reol, int hylde, int plads) {
