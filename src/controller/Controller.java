@@ -369,6 +369,31 @@ public class Controller {
         return klar;
     }
 
+    //søg fade efter tidligere indhold
+    public static ArrayList<Fad> findFadeEfterTidligereIndhold(String søgeord) {
+        if (søgeord == null || søgeord.isBlank()) {
+            throw new IllegalArgumentException("Ugyldigt søgeord indtastet");
+        }
+
+        ArrayList<Fad> resultat = new ArrayList<>();
+        søgeord = søgeord.trim().toLowerCase();
+        for (Fad fad : Storage.getFade()) {
+            String indhold = fad.getTidligereIndhold();
+            if (indhold != null && indhold.trim().toLowerCase().contains(søgeord) ) {
+                resultat.add(fad);
+            }
+        }
+        return resultat;
+    }
+
+    // k15: ledige pladser på et lager
+    public static ArrayList<Lagerplacering> findLedigePladser(Lager lager) {
+        if (lager == null) {
+            throw new IllegalArgumentException("Ugyldigt lager");
+        }
+        return new ArrayList<>(lager.getLedigePladser());
+    }
+
 
     //newMakeNr
     private static int næsteNewMakeNr() {
