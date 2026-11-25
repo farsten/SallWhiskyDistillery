@@ -3,12 +3,15 @@ package model;
 public class Lagerplacering {
     private final int reol;
     private final int hylde;
+    private final int plads;
     private final Lager lager;
-    private Fad fad;
+    private Fad fad; // null hvis pladsen er ledig
 
-    public Lagerplacering(int reol, int hylde, Lager lager) {
+    //kun Lager må oprette placeringer (komposition)
+    Lagerplacering(int reol, int hylde, int plads, Lager lager) {
         this.reol = reol;
         this.hylde = hylde;
+        this.plads = plads;
         this.lager = lager;
     }
 
@@ -18,6 +21,10 @@ public class Lagerplacering {
 
     public int getHylde() {
         return hylde;
+    }
+
+    public int getPlads() {
+        return plads;
     }
 
     public Lager getLager() {
@@ -38,10 +45,7 @@ public class Lagerplacering {
 
     @Override
     public String toString() {
-        return "Lager " + lager.getLagerId() + " (" + lager.getAdresse() + "), reol " + reol + ", hylde " + hylde;
+        return "Lager " + lager.getLagerId() + " (" + lager.getAdresse() + "), reol " + reol
+                + ", hylde " + hylde + ", plads " + plads;
     }
-
-
-
-
 }

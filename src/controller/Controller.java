@@ -129,16 +129,16 @@ public class Controller {
 
 
     //UC6: Registrér fadplacering
-    public static void placerFad(Fad fad, Lager lager, int reol, int hylde) {
+    public static void placerFad(Fad fad, Lager lager, int reol, int hylde, int plads) {
         if (lager == null) {
             throw new IllegalArgumentException("Der skal vælges et lager");
         }
         if (fad == null) {
             throw new IllegalArgumentException("Der skal vælges et fad");
         }
-        Lagerplacering placering = lager.findLagerplacering(reol, hylde);
+        Lagerplacering placering = lager.findLagerplacering(reol, hylde, plads);
         if (placering == null) { //hvis placeringen ikke findes
-            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + " findes ikke");
+            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + ", plads " + plads + " findes ikke");
         }
         fad.setLagerplacering(placering);
     }
@@ -221,8 +221,8 @@ public class Controller {
         return lager;
     }
 
-    public static Lagerplacering opretLagerplacering(Lager lager, int reol, int hylde) {
-        return lager.opretLagerplacering(reol, hylde);
+    public static Lagerplacering opretLagerplacering(Lager lager, int reol, int hylde, int plads) {
+        return lager.opretLagerplacering(reol, hylde, plads);
     }
 
     //UC8: Vis whiskyhistorik

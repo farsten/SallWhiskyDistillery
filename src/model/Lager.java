@@ -9,8 +9,8 @@ public class Lager {
     private final String adresse;
     private final int kapacitet;
 
-    // reolnummer -> (hyldenummer -> lagerplacering) håber det gør det mere overskueligt
-    private final Map<Integer, Map<Integer, Lagerplacering>> reoler;
+    // reolnummer -> (hyldenummer -> (pladsnummer -> lagerplacering))
+    private final Map<Integer, Map<Integer, Map<Integer, Lagerplacering>>> reoler;
 
     public Lager(int lagerId, String adresse, int kapacitet) {
         this.lagerId = lagerId;
@@ -31,58 +31,65 @@ public class Lager {
         return kapacitet;
     }
 
-    public Lagerplacering opretLagerplacering(int reol, int hylde) {
-        if (findLagerplacering(reol, hylde) != null) {
-            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + " findes allerede");
+    public Lagerplacering opretLagerplacering(int reol, int hylde, int plads) {
+        if (findLagerplacering(reol, hylde, plads) != null) {
+            throw new IllegalArgumentException("Reol " + reol + ", hylde " + hylde + ", plads " + plads + " findes allerede");
         }
         if (getAntalPladser() >= kapacitet) {
             throw new IllegalStateException("Lageret er fuldt (kapacitet " + kapacitet + ")");
         }
 
-        Lagerplacering placering = new Lagerplacering(reol, hylde, this);
+        Lagerplacering placering = new Lagerplacering(reol, hylde, plads, this);
 
+        // Opret reolen, hvis den ikke findes
         if (!reoler.containsKey(reol)) {
             reoler.put(reol, new TreeMap<>());
         }
-        reoler.get(reol).put(hylde, placering);
+        Map<Integer, Map<Integer, Lagerplacering>> hylder = reoler.get(reol);
+
+        // Opret hylden på reolen, hvis den ikke findes
+        if (!hylder.containsKey(hylde)) {
+            hylder.put(hylde, new TreeMap<>());
+        }
+        Map<Integer, Lagerplacering> pladser = hylder.get(hylde);
+
+        pladser.put(plads, placering);
         return placering;
     }
 
-    public Lagerplacering findLagerplacering(int reol, int hylde) {
-        Map<Integer, Lagerplacering> hylder = reoler.get(reol);
+    public Lagerplacering findLagerplacering(int reol, int hylde, int plads) {
+        Map<Integer, Map<Integer, Lagerplacering>> hylder = reoler.get(reol);
         if (hylder == null) {
             return null;
         }
-        return hylder.get(hylde);
+        Map<Integer, Lagerplacering> pladser = hylder.get(hylde);
+        if (pladser == null) {
+            return null;
+        }
+        return pladser.get(plads);
     }
 
     public int getAntalPladser() {
         int antal = 0;
-        for (Map<Integer, Lagerplacering> hylder : reoler.values()) {
-            antal += hylder.size();
+        for (Map<Integer, Map<Integer, Lagerplacering>> hylder : reoler.values()) {
+            for (Map<Integer, Lagerplacering> pladser : hylder.values()) {
+                antal += pladser.size();
+            }
         }
         return antal;
     }
 
     public ArrayList<Lagerplacering> getLedigePladser() {
         ArrayList<Lagerplacering> ledige = new ArrayList<>();
-        for (Map<Integer, Lagerplacering> hylder : reoler.values()) {
-            for (Lagerplacering placering : hylder.values()) {
-                if (placering.erLedig()) {
-                    ledige.add(placering);
+        for (Map<Integer, Map<Integer, Lagerplacering>> hylder : reoler.values()) {
+            for (Map<Integer, Lagerplacering> pladser : hylder.values()) {
+                for (Lagerplacering placering : pladser.values()) {
+                    if (placering.erLedig()) {
+                        ledige.add(placering);
+                    }
                 }
             }
         }
         return ledige;
-    }
-
-    @Override
-    public String toString() {
-        return "Lager{" +
-                "lagerId=" + lagerId +
-                ", adresse='" + adresse + '\'' +
-                ", kapacitet=" + kapacitet +
-                ", reoler=" + reoler +
-                '}';
     }
 }
