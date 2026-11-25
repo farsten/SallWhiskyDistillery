@@ -1,9 +1,11 @@
 package controller;
 
 import model.*;
+import org.jetbrains.annotations.Nullable;
 import storage.Storage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Controller {
 
@@ -52,7 +54,7 @@ public class Controller {
 
 
     // UC3: Registrér destillering
-    public static Destillering registrerDestillering(LocalDate startDato, LocalDate slutDato, double mængdeLiter, double alkoholProcent, String rygemateriale, String kommentar, MaltBatch maltBatch, Medarbejder medarbejder) {
+    public static Destillering registrerDestillering(LocalDate startDato, LocalDate slutDato, double mængdeLiter, double alkoholProcent, @Nullable String rygemateriale, String kommentar, MaltBatch maltBatch, Medarbejder medarbejder) {
         if (maltBatch == null) {
             throw new IllegalArgumentException("Der skal vælges en maltbatch");
         }
@@ -151,6 +153,10 @@ public class Controller {
             throw new IllegalArgumentException("Alkoholprocent skal være mellem 0 og 100");
         }
 
+        if (dato == null) {
+            throw new IllegalArgumentException("Vælg en dato for blandingen");
+        }
+
         Blanding blanding = new Blanding(blandingId, dato, navn, liter, alkoholprocent);
         Storage.addBlanding(blanding);
         return blanding;
@@ -166,6 +172,10 @@ public class Controller {
 
         if (fad.getPåfyldninger().isEmpty()) {
             throw new IllegalArgumentException("Der er ingen påfyldninger på det valgte fad");
+        }
+
+        if (!fad.erKlarTilTapning(blanding.getDato())) {
+            throw new IllegalArgumentException("Fad nr. " + fad.getFadId() + " har ikke lagret i mindst 3 år");
         }
 
         if (blanding.getFadList().contains(fad)) {
@@ -328,6 +338,16 @@ public class Controller {
             }
         }
         return null;
+    }
+
+    public static ArrayList<Fad> findFadeKlarTilTapning() { //find fad, som er klar til tapning
+        ArrayList<Fad> klar = new ArrayList<>();
+        for (Fad fad : Storage.getFade()) {
+            if (fad.erKlarTilTapning(LocalDate.now())) {
+                klar.add(fad);
+            }
+        }
+        return klar;
     }
 
 

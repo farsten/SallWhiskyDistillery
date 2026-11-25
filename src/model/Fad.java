@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Fad {
@@ -65,6 +66,21 @@ public class Fad {
             return null;
         }
         return lagerplacering.getLager();
+    }
+
+    public boolean erKlarTilTapning(LocalDate dato) { //3 år skal være gået
+        if (påfyldninger.isEmpty()) {
+            return false;
+        }
+
+        LocalDate senestePåfyldning = påfyldninger.get(0).getDato();
+        for (Påfyldning påfyldning : påfyldninger) {
+            if (påfyldning.getDato().isAfter(senestePåfyldning)) {
+                senestePåfyldning = påfyldning.getDato();
+            }
+        }
+
+        return !senestePåfyldning.plusYears(3).isAfter(dato);
     }
 
     public void setLagerplacering(Lagerplacering nyPlacering) {

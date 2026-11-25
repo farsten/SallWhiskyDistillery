@@ -16,7 +16,7 @@ public class App {
 
 
 
-        Mark mark = Controller.opretMark(1, "Stadsgaard");
+        Mark mark = Controller.opretMark(1, "Stadsgård");
         MaltBatch maltBatch = Controller.opretMaltBatch(1, "Evergreen", LocalDate.of(2020, 8, 15), mark);
         Medarbejder medarbejder = Controller.opretMedarbejder(1, "Snævar");
 

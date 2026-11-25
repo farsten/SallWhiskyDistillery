@@ -20,7 +20,7 @@ class ControllerTest {
     @BeforeEach
     void setUp() {
         Storage.ryd();
-        mark = Controller.opretMark(1, "Stadsgaard");
+        mark = Controller.opretMark(1, "Stadsgård");
         maltBatch = Controller.opretMaltBatch(1, "Evergreen", LocalDate.of(2020, 8, 15), mark);
         medarbejder = Controller.opretMedarbejder(1, "Snævar");
     }
@@ -153,7 +153,7 @@ class ControllerTest {
     }
 
     @Test
-    void placerFadPaaIkkeEksisterendePladsAfvises() {
+    void placerFadPåIkkeEksisterendePladsAfvises() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
 
@@ -161,7 +161,7 @@ class ControllerTest {
     }
 
     @Test
-    void toFadePaaSammePladsAfvises() {
+    void toFadePåSammePladsAfvises() {
         Lager lager = Controller.opretLager(1, "Sall", 100);
         Controller.opretLagerplacering(lager, 1, 1);
         Fad fad1 = Controller.opretFad(1, 130, "A", "Sherry", 0, "Egetræ - spansk");
@@ -207,11 +207,61 @@ class ControllerTest {
         assertTrue(historik.contains("Fad #65"));
         assertTrue(historik.contains("reol 3, hylde 2"));
         assertTrue(historik.contains("Snævar"));
-        assertTrue(historik.contains("Stadsgaard"));
+        assertTrue(historik.contains("Stadsgård"));
     }
 
     @Test
     void visHistorikForUkendtWhiskyAfvises() {
         assertThrows(IllegalArgumentException.class, () -> Controller.visWhiskyHistorik(999));
+    }
+
+    //tre års regl
+
+    @Test
+    void fadPåPræcisTreÅrKanBrugesIBlanding() {
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
+        Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
+                LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
+        Controller.registrerPåfyldning(1, LocalDate.of(2023, 11, 1), 100, 63, fad, d);
+        Blanding b = Controller.opretBlanding(1, LocalDate.of(2026, 11, 1), "A", 500, 52.2);
+
+        Controller.tilføjFadTilBlanding(b, fad);
+
+        assertTrue(b.getFadList().contains(fad));
+    }
+
+    @Test
+    void fadEnDagUnderTreÅrAfvises() {
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
+        Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
+                LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
+        Controller.registrerPåfyldning(1, LocalDate.of(2023, 11, 2), 100, 63, fad, d);
+        Blanding b = Controller.opretBlanding(1, LocalDate.of(2026, 11, 1), "A", 500, 52.2);
+
+        assertThrows(IllegalArgumentException.class, () -> Controller.tilføjFadTilBlanding(b, fad));
+    }
+
+    @Test
+    void senestePåfyldningAfgørOmFadetErKlar() {
+        Fad fad = Controller.opretFad(65, 130, "Casknolia", "Sherry", 0, "Egetræ - spansk");
+        Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
+                LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
+        Controller.registrerPåfyldning(1, LocalDate.of(2021, 3, 1), 50, 63, fad, d); // gammel
+        Controller.registrerPåfyldning(2, LocalDate.of(2025, 6, 1), 50, 63, fad, d); // ny
+
+        assertFalse(fad.erKlarTilTapning(LocalDate.of(2026, 11, 1)));
+    }
+
+    @Test
+    void findFadeKlarTilTapning() {
+        Destillering d = Controller.registrerDestillering(LocalDate.of(2021, 2, 20),
+                LocalDate.of(2021, 2, 22), 400, 68.5, "", "", maltBatch, medarbejder);
+        Fad gammelt = Controller.opretFad(1, 130, "A", "Sherry", 0, "Egetræ - spansk");
+        Fad nyt = Controller.opretFad(2, 130, "B", "Bourbon", 0, "Egetræ - fransk");
+        Controller.registrerPåfyldning(1, LocalDate.of(2021, 3, 1), 100, 63, gammelt, d);
+        Controller.registrerPåfyldning(2, LocalDate.now(), 100, 63, nyt, d);
+
+        assertTrue(Controller.findFadeKlarTilTapning().contains(gammelt));
+        assertFalse(Controller.findFadeKlarTilTapning().contains(nyt));
     }
 }
