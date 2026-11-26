@@ -18,7 +18,7 @@ public class SystemGui extends Application {
 
         initContent(pane);
 
-        Scene scene = new Scene(pane, 900, 600);
+        Scene scene = new Scene(pane, 1000, 600);
         stage.setScene(scene);
         stage.show();
     }

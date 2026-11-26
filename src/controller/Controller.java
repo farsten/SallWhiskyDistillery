@@ -122,7 +122,7 @@ public class Controller {
             throw new IllegalArgumentException("Fadet har kun plads til " + plads + " liter");
         }
 
-        Påfyldning påfyldning = new Påfyldning(påfyldningId, dato, liter, alkoholprocent, destillering);
+        Påfyldning påfyldning = new Påfyldning(påfyldningId, dato, fad, liter, alkoholprocent, destillering);
         fad.addPåfyldning(påfyldning);
 
         return påfyldning;

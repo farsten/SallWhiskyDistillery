@@ -116,15 +116,10 @@ public class Fad {
 
     @Override
     public String toString() {
-        return "Fad{" +
-                "fadId=" + fadId +
-                ", størrelse=" + størrelse +
-                ", leverandør='" + leverandør + '\'' +
-                ", tidligereIndhold='" + tidligereIndhold + '\'' +
-                ", slutMængde=" + slutMængde +
-                ", type='" + type + '\'' +
-                ", påfyldninger=" + påfyldninger +
-                ", lagerplacering=" + lagerplacering +
-                '}';
+        return "FadID: " + fadId +
+                ", " + størrelse +
+                " liter, " + "leveret af " + leverandør +
+                ", tidligere indhold: " + tidligereIndhold +
+                ", type: " + type;
     }
 }

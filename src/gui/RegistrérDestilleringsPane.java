@@ -20,6 +20,8 @@ public class RegistrérDestilleringsPane extends GridPane {
     TextField txfAlkoProcent;
     TextField txfMængde;
     ListView<Destillering> lvwDestilleringer;
+    TextField txfRøgelse;
+    TextField txfKommentar;
 
     public RegistrérDestilleringsPane() {
         initContent();
@@ -30,12 +32,12 @@ public class RegistrérDestilleringsPane extends GridPane {
         setHgap(10);
         setVgap(10);
 
-//overskrift
+        //overskrift
         Label lblRegistrérDestillering = new Label("Registrér destillering");
         add(lblRegistrérDestillering, 0, 0);
         lblRegistrérDestillering.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
 
-        //Labels for newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde
+        //Labels for newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde samt røgelse og kommentar
         Label lblNMNummer = new Label("New Make-nummer");
         add(lblNMNummer, 0, 1);
 
@@ -57,11 +59,16 @@ public class RegistrérDestilleringsPane extends GridPane {
         Label lblMængde = new Label("Mængde (liter)");
         add(lblMængde, 2, 7);
 
+        Label lblRøgelse = new Label("Rygemateriale");
+        add(lblRøgelse, 0, 9);
+
+        Label lblKommentar = new Label("Evt. kommentar");
+        add(lblKommentar, 2, 9);
         /*Tekstfelter, ComboBoxes, DatePickers for
-          newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde*/
+          newMakeNummer, maltbatch, destilleringsansvarlig, startdato, slutdato, alkoholprocent og mængde samt røgelse og kommentar*/
 
         txfNMNummer = new TextField();
-        add(txfNMNummer, 0, 2, 4, 1);
+        add(txfNMNummer, 0, 2, 3, 1);
 
         cbBatch = new ComboBox<>();
         add(cbBatch, 0, 4);
@@ -81,10 +88,17 @@ public class RegistrérDestilleringsPane extends GridPane {
         txfMængde = new TextField();
         add(txfMængde, 2, 8);
 
+        txfRøgelse = new TextField();
+        add(txfRøgelse, 0, 10);
+
+        txfKommentar = new TextField();
+        add(txfKommentar, 2, 10);
+
         //Registrér button
         Button btnRegistrérDestillering = new Button("Registrér");
-        btnRegistrérDestillering.setStyle("-fx-font-size: 10px;");
-        add(btnRegistrérDestillering, 4, 9);
+
+        add(btnRegistrérDestillering, 3, 11, 2, 1);
+        btnRegistrérDestillering.setPrefWidth(100);
         btnRegistrérDestillering.setOnAction(event -> registrérDestilleringAction());
 
         //Label og ListView over destilleringer
@@ -93,7 +107,7 @@ public class RegistrérDestilleringsPane extends GridPane {
         lblRegistreredeDestilleringer.setStyle("-fx-text-fill: black;" + "-fx-font-weight: bold;" + "-fx-font-size: 18px;");
 
         lvwDestilleringer = new ListView<>();
-        add(lvwDestilleringer, 6, 1, 2, 10);
+        add(lvwDestilleringer, 6, 1, 2, 8);
         lvwDestilleringer.setPrefHeight(200);
         updateRegistreredeDestilleringer();
         updateMaltBatchComboBox();
@@ -122,6 +136,8 @@ public class RegistrérDestilleringsPane extends GridPane {
         LocalDate slutDato = dpSlutDato.getValue();
         String alkoholProcentTekst = txfAlkoProcent.getText().trim();
         String mængdeTekst = txfMængde.getText().trim();
+        String rygemateriale = txfRøgelse.getText().trim();
+        String kommentar = txfKommentar.getText().trim();
         int alkoholprocent;
         int mængde;
 
@@ -131,7 +147,7 @@ public class RegistrérDestilleringsPane extends GridPane {
 
             alert.setTitle("Manglende information");
             alert.setHeaderText("Husk at udfylde alle felter");
-            alert.setContentText("Udfyld new make nummer, vælg batch, vælg destilleringsansvarlig, vælg startdato og slutdato, indtast alkoholprocent og mængde");
+            alert.setContentText("Alle felter pånær 'Rygemateriale' og 'kommentar' skal udfyldes");
 
             alert.showAndWait();
             return;
@@ -159,8 +175,17 @@ public class RegistrérDestilleringsPane extends GridPane {
             return;
         }
 
-        Controller.registrerDestillering(startDato,slutDato,mængde,alkoholprocent,null,null,batch,ansvarlig);
+        Controller.registrerDestillering(startDato, slutDato, mængde, alkoholprocent, rygemateriale, kommentar, batch, ansvarlig);
         updateRegistreredeDestilleringer();
+
+        dpStartDato.setValue(null);
+        dpSlutDato.setValue(null);
+        txfMængde.clear();
+        txfAlkoProcent.clear();
+        txfRøgelse.clear();
+        txfKommentar.clear();
+        cbBatch.setValue(null);
+        cbAnsvarlig.setValue(null);
     }
 
 

@@ -7,13 +7,14 @@ public class Påfyldning {
     private LocalDate dato;
     private double liter;
     private double alkoholprocent;
-
+    private Fad fad;
     private Destillering destillering;
 
-    public Påfyldning(int påfyldningId, LocalDate dato, double liter,
+    public Påfyldning(int påfyldningId, LocalDate dato, Fad fad, double liter,
                       double alkoholprocent, Destillering destillering) {
         this.påfyldningId = påfyldningId;
         this.dato = dato;
+        this.fad = fad;
         this.liter = liter;
         this.alkoholprocent = alkoholprocent;
         this.destillering = destillering;

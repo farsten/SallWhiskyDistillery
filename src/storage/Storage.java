@@ -14,6 +14,7 @@ public class Storage {
     private static final ArrayList<Whisky>  whiskyer = new ArrayList<>();
     private static final ArrayList<Medarbejder>  medarbejdere = new ArrayList<>();
     private static final ArrayList<Blanding> blandinger = new ArrayList<>();
+    private static final ArrayList<Påfyldning> påfyldninger = new ArrayList<>();
 
     //KUN TIL TESTS!! Bruges til at rydde
     public static void ryd() {
@@ -25,6 +26,7 @@ public class Storage {
         lagre.clear();
         blandinger.clear();
         whiskyer.clear();
+        påfyldninger.clear();
     }
 
 
@@ -99,5 +101,12 @@ public class Storage {
         blandinger.add(blanding);
     }
 
+    //Påfyldninger
+    public static ArrayList<Påfyldning> getPåfyldninger(){
+        return new ArrayList<>(påfyldninger);
+    }
+    public static void addPåfyldning(Påfyldning påfyldning){
+        påfyldninger.add(påfyldning);
+    }
 
 }
