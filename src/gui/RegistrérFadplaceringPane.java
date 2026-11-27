@@ -96,6 +96,7 @@ public class RegistrérFadplaceringPane extends GridPane {
             alert.setTitle("Manglende information");
             alert.setHeaderText("Husk at udfylde alle felter");
             alert.setContentText("Udfyld felterne vælg fad, vælg lager, reol, hylde og plads");
+            alert.showAndWait();
             return;
         }
         try {

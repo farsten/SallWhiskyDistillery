@@ -29,7 +29,7 @@ public class App {
         Controller.registrerPåfyldning(1, LocalDate.of(2021, 2, 28), 100, 63, fad, d);
         Blanding b = Controller.opretBlanding(1, LocalDate.of(2026, 11, 1), "Første udgivelse", 500, 52.2);
         Controller.tilføjFadTilBlanding(b, fad);
-        Controller.opretWhisky(1, "Færste udgivelse", 52.2, 2.1, "Baghave", "Lækker whisky til aftensmad", b);
+        Controller.opretWhisky(1, "Første udgivelse", 52.2, 2.1, "Baghave", "Lækker whisky til aftensmad", b);
         IO.println(Controller.visWhiskyHistorik(1));
     }
 

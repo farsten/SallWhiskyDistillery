@@ -19,8 +19,8 @@ public class WhiskyProduktionerPane extends TabPane {
         getSelectionModel().select(opretTab);
 
         //Indhold i underfanerne
-        opretTab.setContent(new OpretWhiskyprodukt());
-        visTab.setContent(new VisWhiskyprodukt());
+        opretTab.setContent(new OpretWhiskyproduktPane());
+        visTab.setContent(new VisWhiskyproduktPane());
         //Styling
         farverPåTabs(opretTab);
         farverPåTabs(visTab);

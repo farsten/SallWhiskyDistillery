@@ -114,6 +114,7 @@ public class RegistrérPåfyldningPane extends GridPane {
             alert.setTitle("Manglende information");
             alert.setHeaderText("Husk at udfylde alle felter");
             alert.setContentText("Udfyld felterne destillering, påfyldningsID, fad, antal liter, påfyldningsdato og alkoholprocent");
+            alert.showAndWait();
             return;
         }
 

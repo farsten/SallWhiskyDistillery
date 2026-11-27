@@ -97,6 +97,7 @@ public class RegistrérFadPane extends GridPane {
             alert.setTitle("Manglende information");
             alert.setHeaderText("Husk at udfylde alle felter");
             alert.setContentText("Udfyld felterne fadnummer, fadtype, kapacitet, tidligere indhold og leverandør");
+            alert.showAndWait();
             return;
         }
         try{
